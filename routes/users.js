@@ -5,7 +5,15 @@ import _ from "lodash";
 
 const router = express.Router();
 
-// Create a new user
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await User.find().select("-password");
+    res.send(users);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post("/", async (req, res, next) => {
   try {
     let user = await User.findOne({ email: req.body.email });
@@ -17,14 +25,15 @@ router.post("/", async (req, res, next) => {
       "image", "alt",
       "state", "country", "city",
       "street", "houseNumber", "zip",
-      "biz"
+      "biz", 
     ]));
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();
 
-    res.status(201).send(_.pick(user, ["_id", "first", "last", "email", "biz"]));
+    const result = _.pick(user, ["_id", "first", "last", "email", "biz"]);
+    res.status(201).send(result);
   } catch (err) {
     next(err);
   }
