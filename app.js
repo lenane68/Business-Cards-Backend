@@ -34,4 +34,6 @@ app.use((req, res) => {
 });
 
 const port = process.env.PORT || 8000;
-app.listen(port, () => console.log(`🚀 Backend running on port ${port}`));
+const host = "0.0.0.0"; // Ensures Render can detect the port
+app.listen(port, host, () => console.log(`🚀 Backend running on http://${host}:${port}`));
+
