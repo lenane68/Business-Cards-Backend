@@ -10,11 +10,12 @@ import authRouter from "./routes/auth.js";
 import cardsRouter from "./routes/cards.js";
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ Connected to MongoDB..."))
   .catch((err) => console.error("❌ Could not connect to MongoDB...", err));
 
@@ -22,14 +23,11 @@ app.use("/api/users", usersRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/cards", cardsRouter);
 
-// Immediately after app.use("/api/users", usersRouter);
 app.use((err, req, res, next) => {
   console.error("🎯 ERROR CAUGHT in app.js:", err);
   res.status(500).send("Internal Server Error");
 });
 
-
-// 404 handler for missing endpoints
 app.use((req, res) => {
   res.status(404).send("Endpoint not found");
 });
