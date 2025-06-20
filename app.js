@@ -23,6 +23,13 @@ app.use("/api/users", usersRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/cards", cardsRouter);
 
+// Immediately after app.use("/api/users", usersRouter);
+app.use((err, req, res, next) => {
+  console.error("🎯 ERROR CAUGHT in app.js:", err);
+  res.status(500).send("Internal Server Error");
+});
+
+
 // 404 handler for missing endpoints
 app.use((req, res) => {
   res.status(404).send("Endpoint not found");
