@@ -32,6 +32,17 @@ router.post("/", async (req, res) => {
 
     );
 
+    console.log("JWT payload being sent:", {
+  _id: user._id,
+  email: user.email,
+  biz: user.biz,
+  isAdmin: user.isAdmin,
+  isBusiness: user.isBusiness,
+  name: user.name,
+});
+console.log("JWT token:", token);
+
+
     res.send(token);
   } catch (error) {
     res.status(500).send("Server error");
