@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
     const payload = {
       _id: user._id,
       email: user.email,
-      biz: user.biz || false,
+      isBusiness: user.isBusiness|| false,
       isAdmin: user.isAdmin || false,
       name: user.name,
     };
