@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.js";
 import cardsRoutes from "./routes/cards.js";
 
 const app = express();
+app.use(cors());
 dotenv.config();
 
 app.use(cors());
