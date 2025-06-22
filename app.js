@@ -1,4 +1,3 @@
-// app.js
 import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
@@ -21,7 +20,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/cards", cardsRoutes);
 
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
     app.listen(process.env.PORT || 3000, () => {
