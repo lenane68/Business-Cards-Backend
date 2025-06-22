@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
     console.log("USER FROM DB:", user);
     console.log("JWT payload being sent:", tokenPayload);
 
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+    const token = jwt.sign(tokenPayload, process.env.JWT_KEY);
     res.send(token);
   } catch (error) {
     console.error("Server error during login:", error);
