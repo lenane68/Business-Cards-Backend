@@ -26,7 +26,8 @@ router.post("/", async (req, res) => {
         isBusiness: user.isBusiness,
         name: user.name,
       },
-      process.env.JWT_SECRET
+      process.env.JWT_KEY
+
     );
 
     res.send(token);
