@@ -1,34 +1,37 @@
-import express from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-
+const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const User = require("../models/User"); // adjust to your path
 
-router.post("/", async (req, res, next) => {
+router.post("/", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).send("Invalid credentials");
+    if (!user)
+      return res.status(400).send("Invalid email or password");
 
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(400).send("Invalid credentials");
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword)
+      return res.status(400).send("Invalid email or password");
 
     const token = jwt.sign(
-  {
-    _id: user._id,
-    isBusiness: user.role === "biz",
-    isAdmin: user.role === "admin",
-    role: user.role, 
-  },
-  process.env.JWT_KEY
-);
+      {
+        _id: user._id,
+        email: user.email,
+        biz: user.biz,
+        isAdmin: user.isAdmin,
+        isBusiness: user.isBusiness,
+        name: user.name,
+      },
+      process.env.JWT_SECRET
+    );
 
-    res.send({ token });
-  } catch (err) {
-    next(err);
+    res.send(token);
+  } catch (error) {
+    res.status(500).send("Server error");
   }
 });
 
-export default router;
+module.exports = router;
