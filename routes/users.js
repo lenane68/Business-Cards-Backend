@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { password, email, ...rest } = req.body;
+    const { password, email, biz, ...rest } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).send("User already registered.");
@@ -18,6 +18,8 @@ router.post("/", async (req, res) => {
       ...rest,
       email,
       password: hashedPassword,
+      isBusiness: biz === true,
+      biz: biz === true,
     });
 
     await user.save();
