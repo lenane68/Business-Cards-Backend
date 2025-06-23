@@ -1,41 +1,30 @@
 import express from "express";
-import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import _ from "lodash";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
+router.post("/", async (req, res) => {
   try {
-    const users = await User.find().select("-password");
-    res.send(users);
-  } catch (err) {
-    next(err);
-  }
-});
+    const { password, email, ...rest } = req.body;
 
-router.post("/", async (req, res, next) => {
-  try {
-    let user = await User.findOne({ email: req.body.email });
-    if (user) return res.status(400).send("User already registered.");
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).send("User already registered.");
 
-    user = new User(_.pick(req.body, [
-      "first", "middle", "last",
-      "phone", "email", "password",
-      "image", "alt",
-      "state", "country", "city",
-      "street", "houseNumber", "zip",
-      "biz", 
-    ]));
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
+    const user = new User({
+      ...rest,
+      email,
+      password: hashedPassword,
+    });
+
     await user.save();
-
-    const result = _.pick(user, ["_id", "first", "last", "email", "biz"]);
-    res.status(201).send(result);
+    res.status(201).send({ _id: user._id, email: user.email });
   } catch (err) {
-    next(err);
+    console.error("Signup error:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
 
